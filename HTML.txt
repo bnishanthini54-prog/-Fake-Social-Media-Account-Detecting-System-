@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fake Account Detecting System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    header {
+      background: #333;
+      color: #fff;
+      padding: 20px;
+    }
+    .container {
+      margin: 30px auto;
+      max-width: 600px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background: #007BFF;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Fake Account Detecting System</h1>
+  </header>
+  <div class="container">
+    <h2>Enter Account Details</h2>
+    <input type="number" id="followers" placeholder="Followers">
+    <input type="number" id="following" placeholder="Following">
+    <input type="number" id="posts" placeholder="Number of Posts">
+    <input type="number" id="bioLength" placeholder="Bio Length (characters)">
+    <button onclick="detectAccount()">Check Account</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function detectAccount() {
+      let followers = parseInt(document.getElementById("followers").value);
+      let following = parseInt(document.getElementById("following").value);
+      let posts = parseInt(document.getElementById("posts").value);
+      let bioLength = parseInt(document.getElementById("bioLength").value);
+
+      // Simple rule-based detection (replace with ML later)
+      let score = 0;
+      if (followers < 50 && following > 500) score++;
+      if (posts < 5) score++;
+      if (bioLength < 10) score++;
+      if (followers/following < 0.1) score++;
+
+      let result = document.getElementById("result");
+      if (score >= 2) {
+        result.innerHTML = "⚠️ This looks like a FAKE account!";
+        result.style.color = "red";
+      } else {
+        result.innerHTML = "✅ This looks like a REAL account!";
+        result.style.color = "green";
+      }
+    }
+  </script>
+</body>
+</html>

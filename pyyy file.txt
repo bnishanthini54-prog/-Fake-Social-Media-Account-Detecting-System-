@@ -1,0 +1,96 @@
+# 📌 Fake Account Detecting System - Python Framework
+# Author: Nishanthini
+
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+import matplotlib.pyplot as plt
+
+# -------------------------------
+# [Data Collection]
+# -------------------------------
+def load_data(file_path):
+    """
+    Load dataset containing account features.
+    Example columns: ['followers', 'following', 'posts', 'bio_length', 'is_fake']
+    """
+    data = pd.read_csv(file_path)
+    return data
+
+# -------------------------------
+# [Preprocessing]
+# -------------------------------
+def preprocess_data(data):
+    # Handle missing values
+    data = data.fillna(0)
+    
+    # Normalize numerical features
+    for col in ['followers', 'following', 'posts', 'bio_length']:
+        data[col] = (data[col] - data[col].mean()) / data[col].std()
+    
+    return data
+
+# -------------------------------
+# [Feature Extraction]
+# -------------------------------
+def extract_features(data):
+    X = data[['followers', 'following', 'posts', 'bio_length']]
+    y = data['is_fake']  # target label: 1 = fake, 0 = real
+    return X, y
+
+# -------------------------------
+# [Detection Models]
+# -------------------------------
+def train_model(X, y):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    
+    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model.fit(X_train, y_train)
+    
+    y_pred = model.predict(X_test)
+    
+    # -------------------------------
+    # [Evaluation]
+    # -------------------------------
+    print("Accuracy:", accuracy_score(y_test, y_pred))
+    print("Precision:", precision_score(y_test, y_pred))
+    print("Recall:", recall_score(y_test, y_pred))
+    print("F1 Score:", f1_score(y_test, y_pred))
+    print("ROC AUC:", roc_auc_score(y_test, y_pred))
+    
+    return model
+
+# -------------------------------
+# [Visualization]
+# -------------------------------
+def visualize_feature_importance(model, features):
+    importance = model.feature_importances_
+    plt.bar(features, importance)
+    plt.title("Feature Importance in Fake Account Detection")
+    plt.show()
+
+# -------------------------------
+# [Deployment Simulation]
+# -------------------------------
+def detect_account(model, account_features):
+    """
+    account_features = [followers, following, posts, bio_length]
+    """
+    prediction = model.predict([account_features])
+    return "Fake Account" if prediction[0] == 1 else "Real Account"
+
+# -------------------------------
+# Example Run
+# -------------------------------
+if __name__ == "__main__":
+    data = load_data("accounts_dataset.csv")  # <-- Replace with your dataset
+    data = preprocess_data(data)
+    X, y = extract_features(data)
+    model = train_model(X, y)
+    visualize_feature_importance(model, X.columns)
+    
+    # Test with a sample account
+    test_account = [120, 500, 10, 30]  # Example values
+    print("Prediction:", detect_account(model, test_account))
